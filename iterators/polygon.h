@@ -33,12 +33,14 @@ public:
 
     EdgeIterator<T> BeginEdge()
     {
-        return EdgeIterator<T>(m_points.begin(), m_points.begin());
+        // EdgeIterator<T> edgeIter{m_points.begin(), m_points.begin()};
+        // return EdgeIterator<T>(edgeIter);
+        return EdgeIterator<T>{m_points.begin(), m_points};
     }
 
     EdgeIterator<T> EndEdge()
     {
-        return EdgeIterator<T>(m_points.end(), m_points.begin());
+        return EdgeIterator<T>{m_points.end(), m_points};
     }
 
     void AddPoint(
@@ -65,9 +67,7 @@ public:
 
     Point()
     : Point(0, 0)
-    {
-        std::cout << "Constructing default point" << std::endl;
-    };
+    {};
 
     T GetX() const
     {
@@ -89,19 +89,69 @@ class EdgeIterator
 public:
     EdgeIterator(
         const typename std::vector< Point<T> >::iterator& iter,
-        const typename std::vector< Point<T> >::iterator& beginIter
+        const std::vector< Point<T> >& container
     )
     {
         m_currIter = iter;
-        m_beginIter = beginIter;
+        m_container = &container;
     }
+
+    EdgeIterator(
+        const EdgeIterator<T>& copy
+    )                                   //  copy ctor
+    {
+        m_container = copy.m_container;
+        m_currIter = copy.m_currIter;   
+    }
+
+    EdgeIterator& operator++()          // pre-increment
+    {
+        ++m_currIter;
+        return *this;
+    }
+
+    EdgeIterator& operator++(int)       // post-increment
+    {
+        auto cur = *this;
+        ++(*this);
+        return cur;
+    }
+
+    EdgeIterator& operator=(
+        const EdgeIterator& other
+    )                                  // copy-assignable
+    {
+        m_currIter = other.m_currIter;
+        m_container = other.m_container;
+        return *this;
+    }
+
+    Edge<T> operator*()                //  dereference
+    {
+        // what happens if cur is at the end?
+        auto next = std::next(m_currIter);
+        if (next == m_container->end())
+        {
+            // next = m_container->begin();
+        }
+        return Edge<T>{*m_currIter, *next};
+    }
+
+    bool operator!=(
+        const EdgeIterator& other
+    )                                   //  Equality comparison
+    {
+        return (m_currIter != other.m_currIter);
+    }
+
+    
     // support ++ pre-increment
     // support != operator
     // support * operator
 private:
     // define state of the iterator
     typename std::vector< Point<T> >::iterator m_currIter;
-    std::vector< Point<T> > m_beginIter;
+    const std::vector< Point<T> > *m_container;
 };
 
 template<class T>
