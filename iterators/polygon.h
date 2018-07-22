@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 
+// test program
+
 template<class T>
 class Point;
 

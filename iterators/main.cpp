@@ -16,5 +16,8 @@ int main(int argc, char **argv)
     {
         std::cout << "( " << it->GetX() << " , " << it->GetY() << " ) " << std::endl;
     }
+
+    // iterate edges
+    
     return 0;
 }
