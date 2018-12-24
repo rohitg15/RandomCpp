@@ -1,0 +1,27 @@
+set(number_theory_SRCS
+    factorization.h
+    factorization.cpp
+)
+
+set(Boost_INCLUDE_DIR /usr/local/boost/include/)
+
+FIND_PACKAGE( Boost 1.69 )
+
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
+
+
+add_executable(number_theory
+    ${number_theory_SRCS}
+)
+
+install(TARGETS number_theory DESTINATION bin)
+
+target_link_libraries(number_theory
+    ${Boost_LIBRARIES}
+)
+
+# Specify here the include directories exported
+# by this library
+# target_include_directories(libsocket PUBLIC
+#     ${CMAKE_CURRENT_SOURCE_DIR}
+# )
