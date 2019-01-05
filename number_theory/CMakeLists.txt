@@ -1,6 +1,8 @@
 set(number_theory_SRCS
     factorization.h
+    crypto_math.h
     factorization.cpp
+    main.cpp
 )
 
 set(Boost_INCLUDE_DIR /usr/local/boost/include/)
