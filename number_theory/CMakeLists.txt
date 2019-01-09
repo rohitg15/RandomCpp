@@ -1,6 +1,9 @@
 set(number_theory_SRCS
     factorization.h
     crypto_math.h
+    primality.h
+    file_helper.h
+    file_helper.cpp
     factorization.cpp
     main.cpp
 )

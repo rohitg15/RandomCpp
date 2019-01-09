@@ -28,6 +28,11 @@ T CryptoMath::ModMul(
     T p
 )
 {
+    if (a == 0 || b == 0)
+    {
+        return 0;
+    }
+
     T x = 0, y = a;
     while (b)
     {
@@ -48,6 +53,18 @@ T CryptoMath::ModExp(
     T p
 )
 {
+    if (a == 0 || a == 1)
+    {
+        return a % p;
+    }
+    if (b == 0)
+    {
+        return 1;
+    }
+    if (b == 1)
+    {
+        return a % p;
+    }
     T x = 1, y = a;
     while (b)
     {
@@ -55,7 +72,7 @@ T CryptoMath::ModExp(
         {
             x = ModMul(x, y, p);
         }
-        x = ModMul(x, x, p);
+        y = ModMul(y, y, p);
         b >>= 1;
     }
     return x % p;
