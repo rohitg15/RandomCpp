@@ -97,12 +97,18 @@ bool Primality::MillerRabinPrimalityTest(
     {
         T old = val;
         val = CryptoMath::ModExp<T>(val, 2, p);
-        // val cannot be 1 because order of 
-        // the group is p-1 if p is prime
-        if (val == p - 1 || val == -1)
+        if (val == p - 1 )
         {
             // probably prime
             return true;
+        }
+        else if (val == 1)
+        {
+            // this implies that for the previous value of i (say iprev),
+            // 2 ** iprev != -1 mod p; But 2 ** i = 1 mod p;
+            // which means that the previous value was a non-trivial square root
+            // of 1, which implies p is composite
+            return false;
         }
     }
     return false;
