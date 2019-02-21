@@ -1,6 +1,8 @@
 #ifndef _DISCRETE_LOG_H_
 #define _DISCRETE_LOG_H_
 
+#include <cstdlib>
+
 template<typename T>
 class Factorization
 {
@@ -109,7 +111,7 @@ T Factorization<T>::f(
     T n
 )
 {
-    return ((x * x) + 1) % n;
+    return ((x * x) + rand()) % n;
 }
 
 

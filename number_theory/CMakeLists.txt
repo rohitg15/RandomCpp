@@ -1,10 +1,18 @@
 set(number_theory_SRCS
     factorization.h
     crypto_math.h
+<<<<<<< HEAD
     #codes.h
     #codes.cpp
     factorization.cpp
     
+=======
+    primality.h
+    file_helper.h
+    file_helper.cpp
+    factorization.cpp
+    main.cpp
+>>>>>>> a3f7d3af0132efd31cea7535eb3b053038e0ca40
 )
 
 set(Boost_INCLUDE_DIR /usr/local/boost/include/)
