@@ -19,6 +19,12 @@ class CryptoMath
         T b,
         T p 
     );
+
+    template <typename T>
+    T BinaryGcd(
+        T a,
+        T b
+    );
 };
 
 template <typename T>
@@ -60,6 +66,67 @@ T CryptoMath::ModExp(
         b >>= 1;
     }
     return (x % p);
+}
+
+
+template <typename T>
+T CryptoMath::BinaryGcd(
+    T a,
+    T b
+)
+{
+    if (a == 0 || b == 0)
+    {
+        return 0;
+    }
+
+    if (a == 1 || b == 1)
+    {
+        return 1;
+    }
+
+    if (a < b)
+    {
+        return CryptoMath::BinaryGcd(b, a);
+    }
+
+    if (a == b)
+    {
+        return a;
+    }
+
+    T d = 1;
+    while (a != b)
+    {
+        if (a < b)
+        {
+            T t = a;
+            a = b;
+            b = t;
+        }
+
+        if ( !(a & 1) && !(b & 1) )
+        {
+            d <<= 1;
+            a >>= 1;
+            b >>= 1;
+        }
+        else if ( !(a & 1) )
+        {
+            a >>= 1;
+        }
+        else if ( !(b & 1) )
+        {
+            b >>= 1;
+        }
+        else
+        {
+            T t = a - b;
+            a = b;
+            b = t;
+        }
+    }
+    return d * a;
 }
 
 #endif  //  _CRYPTO_MATH_H_
