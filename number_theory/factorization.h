@@ -21,6 +21,12 @@ class Factorization
             T a,
             T b
         );
+
+        static bool Egcd(
+            T a,
+            T b,
+            std::pair<T, T>& result
+        );
 };
 
 template<typename T>
@@ -54,6 +60,48 @@ T Factorization<T>::Gcd(
     }
     return a;
 }
+
+template <typename T>
+bool Factorization<T>::Egcd(
+    T a,
+    T b,
+    std::pair<T, T>& result
+)
+{
+    if (a == 0 || b == 0)
+    {
+        return false;
+    }
+
+    if (a < b)
+    {
+        return false;
+    }
+
+    T s0 = 1, s1 = 0, s2 = 0, t0 = 0, t1 = 1, t2 = 0;
+    T q = 0, r = 0;
+
+    while (b > 0)
+    {
+        q = a / b;
+        r = a - q * b;
+
+        s2 = s0 - q * s1;
+        t2 = t0 - q * t1;
+
+        s0 = s1, s1 = s2;
+        t0 = t1, t1 = t2;
+        a = b, b = r;
+    }
+
+
+    // a is the gcd at this point
+    result.first = s0;
+    result.second = t0;
+
+    return true;
+}
+    
 
 template<typename T>
 T Factorization<T>::f(

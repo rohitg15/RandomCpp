@@ -1,11 +1,15 @@
 set(number_theory_SRCS
     factorization.h
+    crypto_math.h
+    #codes.h
+    #codes.cpp
     factorization.cpp
+    
 )
 
 set(Boost_INCLUDE_DIR /usr/local/boost/include/)
 
-FIND_PACKAGE( Boost 1.69 )
+#FIND_PACKAGE( Boost 1.69 )
 
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
