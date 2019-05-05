@@ -6,25 +6,32 @@ template <typename T>
 struct Item
 {
     T item_;
-    unsigned idx_;
-    unsigned parent_;
-    unsigned rank_;
+    int idx_;
+    int parent_;
+    int rank_;
 
-    Item() = default;
+    Item();
     Item(T item, int idx);
     Item(Item<T> const& item);
     Item<T>& operator=(Item<T> const& item);
 
     friend bool operator==(Item<T> const& item0, Item<T> const& item1)
     {
-	    return ((item0.idx_ == item1.idx_) && (item0.parent_ == item1.parent_) && (item0.rank_ == item1.rank_));
+	    return ((item0.item_ == item1.item_) && (item0.idx_ == item1.idx_) && (item0.parent_ == item1.parent_) && (item0.rank_ == item1.rank_));
     }
     friend bool operator!=(Item<T> const& item0, Item<T> const& item1)
     {
 	return !(item0 == item1);
     }
-
 };
+
+template <typename T>
+Item<T>::Item()
+    :
+	idx_(-1),
+	parent_(-1),
+	rank_(-1)
+{}
 
 template <typename T>
 Item<T>::Item(T item, int idx)
@@ -37,6 +44,7 @@ Item<T>::Item(T item, int idx)
 template <typename T>
 Item<T>::Item(Item<T> const& item)
     :
+	item_(item.item_),
 	idx_(item.idx_),
 	parent_(item.parent_),
 	rank_(item.rank_)
@@ -47,6 +55,7 @@ Item<T>& Item<T>::operator=(Item<T> const& item)
 {
     if (this != &item)
     {
+	item_ = item.item_;
 	idx_ = item.idx_;
 	parent_ = item.parent_;
 	rank_ = item.rank_;
