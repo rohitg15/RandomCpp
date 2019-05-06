@@ -1,4 +1,5 @@
 #include "union_find.h"
+#include "morris_traversal.h"
 
 
 using Iitem = Item<int>;
@@ -43,10 +44,44 @@ void TestUnionFind()
 }
 
 
+void TestMorrisTraversal()
+{
+
+    // create test tree (1, 2, 3, 4, 5, 6, 7)
+    std::unique_ptr<Node<int> > root = std::make_unique<Node<int> >(4);
+    std::unique_ptr<Node<int> > node1 = std::make_unique<Node<int> >(1);
+    std::unique_ptr<Node<int> > node2 = std::make_unique<Node<int> >(2);
+    std::unique_ptr<Node<int> > node3 = std::make_unique<Node<int> >(3);
+    std::unique_ptr<Node<int> > node5 = std::make_unique<Node<int> >(5);
+    std::unique_ptr<Node<int> > node6 = std::make_unique<Node<int> >(6);
+    std::unique_ptr<Node<int> > node7 = std::make_unique<Node<int> >(7);
+    
+
+    node2->left_ = std::move(node1);
+    node2->right_ = std::move(node3);
+
+    node6->left_ = std::move(node5);
+    node6->right_ = std::move(node7);
+
+    root->left_ = std::move(node2);
+    root->right_ = std::move(node6);
+
+    Tree<int> tree(std::move(root));
+
+    auto results = tree.MorrisTraversal();
+    for (auto const& res : results)
+    {
+        std::cout << res << " ";
+    }
+    std::cout << std::endl;
+    
+}
+
+
 int main(int argc, char **argv)
 {
 
-    TestUnionFind();
-
+    TestMorrisTraversal();
+    
     return 0;
 }

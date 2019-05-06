@@ -1,6 +1,7 @@
 set(data_structures_SRCS
     union_find.h
     union_find.cpp
+    morris_traversal.h
     main.cpp
 )
 
