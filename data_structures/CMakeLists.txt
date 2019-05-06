@@ -1,6 +1,7 @@
 set(data_structures_SRCS
     union_find.h
     union_find.cpp
+    main.cpp
 )
 
 set(Boost_INCLUDE_DIR /usr/local/boost/include/)
