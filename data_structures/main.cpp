@@ -20,11 +20,11 @@ void TestUnionFind()
     Iitem ref0, ref4;
     if (!uf.FindSet(items[0], ref0))
     {
-	throw std::runtime_error("item0 not in set");
+	    throw std::runtime_error("item0 not in set");
     }
     if(!uf.FindSet(items[4], ref4))
     {
-	throw std::runtime_error("item4 not in set");
+	    throw std::runtime_error("item4 not in set");
     }
 
     assert(ref0 == ref4);
@@ -32,11 +32,11 @@ void TestUnionFind()
     Iitem ref3, ref5;
     if (!uf.FindSet(items[3], ref3))
     {
-	throw std::runtime_error("item3 not in set");
+	    throw std::runtime_error("item3 not in set");
     }
     if (!uf.FindSet(items[5], ref5))
     {
-	throw std::runtime_error("item5 not in set");
+	    throw std::runtime_error("item5 not in set");
     }
     assert(ref3 != ref5);
     std::cout << "Success!" << std::endl;

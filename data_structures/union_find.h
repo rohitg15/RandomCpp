@@ -21,7 +21,7 @@ struct Item
     }
     friend bool operator!=(Item<T> const& item0, Item<T> const& item1)
     {
-	return !(item0 == item1);
+	    return !(item0 == item1);
     }
 };
 
@@ -55,10 +55,10 @@ Item<T>& Item<T>::operator=(Item<T> const& item)
 {
     if (this != &item)
     {
-	item_ = item.item_;
-	idx_ = item.idx_;
-	parent_ = item.parent_;
-	rank_ = item.rank_;
+        item_ = item.item_;
+        idx_ = item.idx_;
+        parent_ = item.parent_;
+        rank_ = item.rank_;
     }
 }
 
@@ -108,14 +108,14 @@ bool UnionFind<T, Collection>::FindSet(Item<T> const& item, Item<T> & res)
     int idx = item.idx_;
     if (idx < 0 || idx >= items_.size())
     {
-	return false;
+	    return false;
     }
 
     // implement path compression
     auto parentIdx = FindSetImpl(idx);
     if (parentIdx < 0)
     {
-	return false;
+	    return false;
     }
 
      // copy assignment
@@ -129,13 +129,13 @@ int UnionFind<T, Collection>::FindSetImpl(int idx)
 {
     if (idx < 0 || idx >= items_.size())
     {
-	return -1;
+	    return -1;
     }
 
     // implementing path compression
     if (idx != items_[idx].parent_)
     {
-	items_[idx].parent_ = FindSetImpl(items_[idx].parent_);
+	    items_[idx].parent_ = FindSetImpl(items_[idx].parent_);
     }
     return items_[idx].parent_;
 }
@@ -145,7 +145,7 @@ void UnionFind<T, Collection>::MergeSet(Item<T> const& item0, Item<T> const& ite
 {
     if (item0.idx_ == item1.idx_)
     {
-	return;
+	    return;
     }
 
     // get indices of representatives
@@ -153,7 +153,7 @@ void UnionFind<T, Collection>::MergeSet(Item<T> const& item0, Item<T> const& ite
     auto p1 = FindSetImpl(item1.idx_);
     if (p0 == -1 || p1 == -1)
     {
-	throw std::runtime_error("items do not exist in set");
+	    throw std::runtime_error("items do not exist in set");
     }
 
     // get the actual representative items
@@ -161,8 +161,8 @@ void UnionFind<T, Collection>::MergeSet(Item<T> const& item0, Item<T> const& ite
     assert(p1 >= 0 && p1 <= items_.size());
     if (p0 == p1)
     {
-	// item0 and item1 already belong to the same set
-	return;
+	    // item0 and item1 already belong to the same set
+	    return;
     }
     auto& pItem0 = items_[p0];
     auto& pItem1 = items_[p1];
@@ -170,16 +170,16 @@ void UnionFind<T, Collection>::MergeSet(Item<T> const& item0, Item<T> const& ite
    // union by rank - smaller subtree is appended to larger subtree based on rank
     if (pItem0.rank_ > pItem1.rank_)
     {
-	pItem1.parent_ = pItem0.idx_;
+	    pItem1.parent_ = pItem0.idx_;
     }
     else
     {
-	pItem0.parent_ = pItem1.idx_;
+	    pItem0.parent_ = pItem1.idx_;
     }
 
     if (pItem0.rank_ == pItem1.rank_)
     {
-	++pItem1.rank_;
+	    ++pItem1.rank_;
     }
 }
 
