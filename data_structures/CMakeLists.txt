@@ -3,6 +3,8 @@ set(data_structures_SRCS
     union_find.cpp
     morris_traversal.h
     main.cpp
+    string_utils.cpp
+    string_utils.h
 )
 
 set(Boost_INCLUDE_DIR /usr/local/boost/include/)

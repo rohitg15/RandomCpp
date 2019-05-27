@@ -1,5 +1,7 @@
 #include "union_find.h"
 #include "morris_traversal.h"
+#include "string_utils.h"
+#include "hash_table.h"
 
 
 using Iitem = Item<int>;
@@ -77,11 +79,61 @@ void TestMorrisTraversal()
     
 }
 
+void TestStringUtils()
+{
+    std::string str = "fsgbbfg, rsgfrg, adsgvdsbvf , wqrgvsfrb,  qwvfb,  wb frb  , rwf df , fvfsgvbfsbsbfb dfb  f , frgvfsb fbb , frswbfsb  ,thysaeafv ,354vrgvv ,dsbv fs ,sdf fsv sdfvsdvsdv,ads dfsvdsvdsvds, ds sdv ,dasgdbva";
+    auto r1 = StringUtils::Split1(str);
+    auto r2 = StringUtils::Split2(str);
+
+    assert(r1.size() == r2.size());
+}
+
+
+void TesthashTable()
+{
+    HashTable<std::string, int> table;
+    table.Insert("one", 1);
+    table.Insert("two", 2);
+    table.Insert("three", 3);
+    
+    int x = 0;
+    if (table.Get("one", x))
+    {
+        std::cout << "found key one : " << x << std::endl;
+    }
+    else
+    {
+        std::cout << "Could not find key one" << std::endl;
+    }
+    
+
+
+    table.Remove("one");
+    if (table.Get("one", x))
+    {
+        std::cout << "found key one : " << x << std::endl;
+    }
+    else
+    {
+        std::cout << "Could not find key one" << std::endl;
+    }
+    table.Remove("two");
+    table.Insert("one", 5);
+    if (table.Get("one", x))
+    {
+        std::cout << "found key one : " << x << std::endl;
+    }
+    else
+    {
+        std::cout << "Could not find key one" << std::endl;
+    }
+}
+
+
 
 int main(int argc, char **argv)
 {
 
-    TestMorrisTraversal();
-    
+    TesthashTable();
     return 0;
 }

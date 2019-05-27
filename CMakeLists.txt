@@ -8,5 +8,5 @@ enable_testing()
 
 # add_subdirectory(bit_magic)
 # add_subdirectory(iterators)
-#add_subdirectory(number_theory)
+# add_subdirectory(number_theory)
 add_subdirectory(data_structures)
