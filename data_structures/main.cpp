@@ -2,7 +2,15 @@
 #include "morris_traversal.h"
 #include "string_utils.h"
 #include "hash_table.h"
-
+#include <sstream>
+#include <unordered_map>
+#include <chrono>
+#include "thread_safe_queue.h"
+#include "thread_pool_queue.h"
+#include "thread_pool.h"
+#include "thread_context.h"
+#include <thread>
+#include <chrono>
 
 using Iitem = Item<int>;
 using Collection = std::vector<Iitem>;
@@ -89,51 +97,199 @@ void TestStringUtils()
 }
 
 
-void TesthashTable()
+
+std::vector<std::pair<std::string, int> > GenerateInputs()
 {
-    HashTable<std::string, int> table;
-    table.Insert("one", 1);
-    table.Insert("two", 2);
-    table.Insert("three", 3);
+    std::vector<std::pair<std::string, int> > v;
+    std::string str = "test";
     
-    int x = 0;
-    if (table.Get("one", x))
+    for (int i = 0 ; i < 50000; ++i)
     {
-        std::cout << "found key one : " << x << std::endl;
+        std::stringstream ss;
+        ss << i;
+        v.emplace_back(str + ss.str(), i);
+        ss.clear();
     }
-    else
-    {
-        std::cout << "Could not find key one" << std::endl;
-    }
-    
+    return std::move(v);
+}
 
 
-    table.Remove("one");
-    if (table.Get("one", x))
+HashTable<std::string, int> table;
+// std::unordered_map<std::string, int> table;
+
+
+void TesthashTable(std::vector<std::pair<std::string, int> > const& input)
+{
+   
+
+    for(auto const& kvp : input)
     {
-        std::cout << "found key one : " << x << std::endl;
-    }
-    else
-    {
-        std::cout << "Could not find key one" << std::endl;
-    }
-    table.Remove("two");
-    table.Insert("one", 5);
-    if (table.Get("one", x))
-    {
-        std::cout << "found key one : " << x << std::endl;
-    }
-    else
-    {
-        std::cout << "Could not find key one" << std::endl;
+        table.Insert(kvp.first, kvp.second);
     }
 }
 
 
+// void TestUnorderedMap(std::vector<std::pair<std::string, int> > const& input)
+// {
+   
+//     for(auto const& kvp : input)
+//     {
+//         table.emplace(kvp.first, kvp.second);
+//     }
+// }
+
+
+static void TestThreadSafeQueue_ManyProducersOneConsumer()
+{
+    ThreadSafeQueue<std::string> q;
+    auto consumer = std::thread([&q](){
+        for (int i = 0; i < 7; ++i)
+        {
+            std::string item;
+            q.Dequeue(item);
+            std::cout << item << std::endl;
+        }
+    });
+
+    auto producer0 = std::thread([&q](){
+        q.Enqueue("test0_prod0");
+        q.Enqueue("test1_prod0");
+        q.Enqueue("test2_prod0");
+        q.Enqueue("test3_prod0");
+    });
+
+    std::vector<std::string> strs = {"test0_prod1", "test1_prod1", "test2_prod1"};
+    auto producer1 = std::thread([&q, &strs](){
+        for (auto const& val : strs)
+        {
+            q.Enqueue(val);
+        }
+    });
+
+    producer1.join();
+    producer0.join();
+    consumer.join();
+}
+
+static void TestThreadPoolQueue_ManyProducersOneConsumer()
+{
+    ThreadPoolQueue<std::string> q;
+    auto consumer = std::thread([&q](){
+        for (int i = 0; i < 7; ++i)
+        {
+            std::string item;
+            q.Dequeue(item);
+            std::cout << item << std::endl;
+        }
+    });
+
+    auto producer0 = std::thread([&q](){
+        q.Enqueue("test0_prod0");
+        q.Enqueue("test1_prod0");
+        q.Enqueue("test2_prod0");
+        q.Enqueue("test3_prod0");
+    });
+
+    std::vector<std::string> strs = {"test0_prod1", "test1_prod1", "test2_prod1"};
+    auto producer1 = std::thread([&q, &strs](){
+        for (auto const& val : strs)
+        {
+            q.Enqueue(val);
+        }
+    });
+
+    producer1.join();
+    producer0.join();
+    consumer.join();
+}
+
+static void TestThreadPoolQueue_IdleConsumersRelease()
+{
+    ThreadPoolQueue<std::string> q;
+    auto consumer0 = std::thread([&q](){
+        for (int i = 0; i < 7; ++i)
+        {
+            std::string item = "";
+            q.Dequeue(item);
+            std::cout << item << std::endl;
+        }
+    });
+
+    auto consumer1 = std::thread([&q](){
+        for (int i = 0; i < 7; ++i)
+        {
+            std::string item;
+            q.Dequeue(item);
+            std::cout << item << std::endl;
+        }  
+   });
+
+    q.ReleaseThreads();
+    consumer0.join();
+    consumer1.join();
+}
+
+static void TestInsertAndRetrieve()
+{
+    ThreadSafeQueue<int> q;
+    auto consumer = std::thread([&q](){
+        for (int i = 0; i < 100; ++i)
+        {
+            int item;
+            q.Dequeue(item);
+            std::cout << item << std::endl;
+        }
+    });
+
+    auto producer = std::thread([&q](){
+        for (int i = 0; i < 100; ++i)
+        {
+            q.Enqueue(i);
+        }
+    });
+
+    producer.join();
+    consumer.join();
+}
+
+
+static void TestThreadPool_BasicTest()
+{
+    std::vector<int> val {1234, 0, 0, 0};
+
+    ThreadPool<ThreadContext> threadPool;
+
+    threadPool.AddJob(std::move(ThreadContext(val.data(), 10)));
+    threadPool.AddJob(ThreadContext(&val[1], 20));
+    threadPool.AddJob(ThreadContext(&val[2], 30));
+    threadPool.AddJob(ThreadContext(&val[3], 40));
+
+
+    // sleep for 5 seconds
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+//    threadPool.KillAllThreads();
+    threadPool.Join();
+
+
+    for (auto const& v : val)
+    {
+	std::cout << v << std::endl;
+    }
+}
 
 int main(int argc, char **argv)
 {
+    // auto input = GenerateInputs();
+    // auto start = std::chrono::high_resolution_clock::now(); 
+    // TesthashTable(input);
+    // auto stop = std::chrono::high_resolution_clock::now();
+    // auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    // std::cout << "Time in milliseconds for inserting 50000 inputs " <<  duration.count() << std::endl;
 
-    TesthashTable();
+    //TestThreadSafeQueue_ManyProducersOneConsumer();
+    //TestThreadPoolQueue_ManyProducersOneConsumer();
+    //TestThreadPoolQueue_IdleConsumersRelease();
+    TestThreadPool_BasicTest();
     return 0;
 }
